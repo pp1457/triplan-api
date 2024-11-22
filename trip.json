@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "trip",
+  "description": "Schema for a trip itinerary including attractions and travel plans.",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The title of the trip."
+    },
+    "description": {
+      "type": "string",
+      "description": "A brief description of the trip."
+    },
+    "range": {
+      "type": "object",
+      "description": "The start and end date of the trip.",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date",
+          "description": "The starting date of the trip (YYYY-MM-DD)."
+        },
+        "end": {
+          "type": "string",
+          "format": "date",
+          "description": "The ending date of the trip (YYYY-MM-DD)."
+        }
+      },
+      "required": ["start", "end"]
+    },
+    "travel_plan": {
+      "type": "array",
+      "description": "A list of activities and travel details for the trip.",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": { "const": "attraction" },
+              "name": { "type": "string" },
+              "location": { "type": "string" },
+              "description": { "type": "string" },
+              "visit_duration": { "type": "integer", "minimum": 0 }
+            },
+            "required": ["type", "name", "location", "visit_duration"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": { "const": "travel" },
+              "travelMode": { "type": "string" },
+              "from": { "type": "string" },
+              "to": { "type": "string" },
+              "time": { "type": "integer", "minimum": 0 },
+              "notes": { "type": "string" }
+            },
+            "required": ["type", "travelMode", "from", "to", "time"],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": ["title", "description", "range", "travel_plan"],
+  "additionalProperties": false
+}
