@@ -1,5 +1,5 @@
 import json
-import mapAPI as m
+import map_api as m
 from dotenv import load_dotenv
 import os
 
