@@ -20,9 +20,9 @@ def process_user_input(user_input):
 """
 
     payload = {
-        "model": "llama2",  # 替換為實際使用的模型名稱
+        "model": "llama3.2",  # 替換為實際使用的模型名稱
         "prompt": prompt,
-        "temperature": 0.5,
+        "temperature": 0.2,
         "max_tokens": 300
     }
 
