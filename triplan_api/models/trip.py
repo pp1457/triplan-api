@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Tuple
 from datetime import date
 
 
@@ -11,6 +11,14 @@ class DateRange:
     def __repr__(self):
         return f"DateRange(start={self.start}, end={self.end})"
 
+class Location:
+    """Represents a geographic location with latitude and longitude."""
+    def __init__(self, latitude: float, longitude: float):
+        self.latitude = latitude
+        self.longitude = longitude
+
+    def __repr__(self):
+        return f"Location(latitude={self.latitude}, longitude={self.longitude})"
 
 class Attraction:
     """Represents an attraction in the travel plan."""
@@ -27,7 +35,8 @@ class Attraction:
         rating_count: Optional[int] = 0,
         ticket_price: Optional[float] = None,
         tags: Optional[List[str]] = None,
-        url: Optional[str] = ""
+        url: Optional[str] = "",
+        location: Optional[Location] = None
     ):
         self.type = "attraction"
         self.name = name
@@ -42,6 +51,7 @@ class Attraction:
         self.ticket_price = ticket_price
         self.tags = tags or []
         self.url = url or ""
+        self.location = location
 
     def __repr__(self):
         return (
@@ -49,9 +59,9 @@ class Attraction:
             f"description='{self.description}', visit_duration={self.visit_duration}, "
             f"travel_time_to_prev={self.travel_time_to_prev}, travel_time_to_next={self.travel_time_to_next}, "
             f"reviews={self.reviews}, rating={self.rating}, rating_count={self.rating_count}, "
-            f"ticket_price={self.ticket_price}, tags={self.tags}, url='{self.url}')"
+            f"ticket_price={self.ticket_price}, tags={self.tags}, url='{self.url}', "
+            f"location={self.location})"
         )
-
 class Travel:
     """Represents a travel segment in the travel plan."""
     def __init__(self, travel_mode: str, from_location: str, to_location: str, time: int, notes: Optional[str] = None):

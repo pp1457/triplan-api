@@ -1,7 +1,8 @@
-from triplan_api.utils.chat_with_ai import aquire_attraction
-from triplan_api.models.trip import Attraction
-from triplan_api.utils.map_api import *
+import os
 
+from triplan_api.utils.chat_with_ai import aquire_attraction
+from triplan_api.models.trip import Attraction, Location
+from triplan_api.utils.map_api import *
 
 # Step 1: Mock process_user_input
 def process_user_input(user_input):
@@ -35,7 +36,8 @@ def find_mid_point(current_trip):
             prev_non_none = current_trip[start - 1] if start > 0 else None
             next_non_none = current_trip[end + 1] if end + 1 < n else None
 
-            results.append((prev_non_none, next_non_none, mid_index))
+            results = (prev_non_none, next_non_none, mid_index)
+            break
         else:
             i += 1
 
@@ -43,11 +45,12 @@ def find_mid_point(current_trip):
 
 # Step 3: Query attractions from a mock data source
 def query_attractions(start, end, parsed_input):
+    center = Location
     center.lati = (start.location.latitude + end.location.latitude)
     center.long = (start.location.longitude + end.location.longitude)
 
-    for keywords
     candidates = text_search(parsed_input, center.lati, center.long, os.getenv("MAP_API_KEY"))
+
 
 #def query_attractions(start, end, parsed_input, mid_information):
 #    """
@@ -126,10 +129,9 @@ def gen(current_trip, user_input):
     
     # Mock process user input
     parsed_input = process_user_input(user_input)
-    mid_information = {"location": current_trip[mid_index - 1]}  # Adjust as needed
     
     # Query attractions
-    attractions = query_attractions(start, end, parsed_input, mid_information)
+    attractions = query_attractions(start, end, parsed_input)
     
     # Use `aquire_attraction` to find the best attraction
     best_attraction = choose_best_attraction(current_trip, mid_index, attractions, user_input)
@@ -154,7 +156,8 @@ if __name__ == "__main__":
             rating=None,
             rating_count=0,
             ticket_price=None,
-            url=""
+            url="",
+            location=Location(latitude=40.7128, longitude=-74.0060)  # Example coordinates for New York City
         ),
         None,  # Empty slot to be filled
         Attraction(
@@ -169,8 +172,9 @@ if __name__ == "__main__":
             rating=4.5,
             rating_count=150,
             ticket_price=100.0,
-            url="http://example.com/hotel"
-        ),
+            url="http://example.com/hotel",
+            location=Location(latitude=48.8566, longitude=2.3522)  # Example coordinates for Paris
+        )
     ]
 
     user_input = "I want to explore historical landmarks and scenic views along the way."
