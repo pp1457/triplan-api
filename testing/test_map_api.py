@@ -1,3 +1,5 @@
+# \triplan-api> python3 -m testing.test_map_api
+
 import json
 from triplan_api.utils import map_api as m
 from dotenv import load_dotenv
@@ -32,6 +34,8 @@ default_place_id = "ChIJH56c2rarQjQRphD9gvC8BhI"
 default_origin_place_id = "ChIJqS4y_ompQjQRZn8d7gQEdSE"  # 台大
 default_destination_place_id = "ChIJSTLZ6barQjQRMdkCqrP3CNU"  # 101
 default_travel_mode = "DRIVE"
+
+print("press enter for defalt parameter")
 
 # Execute corresponding function based on the parameter
 if parameter == "1":
