@@ -4,11 +4,12 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 from triplan_api.core.gen import gen
+from triplan_api.models.trip import *
 
 app = FastAPI()
 
 class TripRequest(BaseModel):
-    trip: List[str]
+    trip: Trip
     user_input: str
 
 class Item(BaseModel):
