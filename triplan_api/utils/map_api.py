@@ -10,11 +10,11 @@ def text_search(text_query, latitude, longitude, api_key):
     :param api_key: Google Maps API key
     :return: JSON (up to 20 place_id results)
     """
-    url = 'https://places.googleapis.com/v1/places:searchText'
+    url = 'https://places.googleapis.com/v1/places:searchText?languageCode=zh-TW'
     headers = {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': api_key,
-        'X-Goog-FieldMask': 'places.id'
+        'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress'
     }
     payload = {
         "textQuery": text_query,
