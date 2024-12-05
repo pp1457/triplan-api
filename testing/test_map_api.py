@@ -1,5 +1,5 @@
 import json
-import map_api as m
+from triplan_api.utils import map_api as m
 from dotenv import load_dotenv
 import os
 
@@ -19,21 +19,24 @@ travel_mode = "DRIVE"
 
 try:
     results = m.text_search(text_query, latitude, longitude, api_key)
-    print("text_search結果-----------------------------------------------：")
+    print("-----------------------------------------------")
+    print("text_search result:")
     print(json.dumps(results, indent=4, ensure_ascii=False))
 except Exception as e:
-    print(f"text_search發生錯誤：{e}")
+    print(f"text_search error: {e}")
 
 try:
     results = m.place_details(place_id, api_key)
-    print("place_details結果：-----------------------------------------------")
+    print("-----------------------------------------------")
+    print("place_details result:")
     print(json.dumps(results, indent=4, ensure_ascii=False))
 except Exception as e:
-    print(f"place_details發生錯誤：{e}")
+    print(f"place_details error: {e}")
 
 try:
     results = m.routes(place_id,place_id2,travel_mode,api_key)
-    print("routes結果：-----------------------------------------------")
+    print("-----------------------------------------------")
+    print("routes result:")
     print(json.dumps(results, indent=4, ensure_ascii=False))
 except Exception as e:
-    print(f"routes發生錯誤：{e}")
+    print(f"routes error: {e}")

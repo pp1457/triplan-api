@@ -51,7 +51,7 @@ def place_details(place_id, api_key):
     headers = {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': api_key,
-        'X-Goog-FieldMask': 'displayName,types,formattedAddress,rating,googleMapsUri,reviews.text.text,regularOpeningHours,priceLevel,editorialSummary.text,userRatingCount'
+        'X-Goog-FieldMask': 'displayName,types,formattedAddress,rating,googleMapsUri,reviews.text.text,regularOpeningHours,priceLevel,editorialSummary.text,userRatingCount,location'
     }
 
     response = requests.get(url, headers=headers)

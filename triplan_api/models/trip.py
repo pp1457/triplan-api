@@ -17,36 +17,40 @@ class Attraction:
     def __init__(
         self,
         name: str,
-        location: str,
+        address: str,
         description: Optional[str] = None,
         visit_duration: int = 0,
         travel_time_to_prev: int = 0,
         travel_time_to_next: int = 0,
-        review: Optional[str] = None,
-        score: Optional[float] = None,
+        reviews: Optional[List[str]] = None,
+        rating: Optional[float] = None,
+        rating_count: Optional[int] = 0,
         ticket_price: Optional[float] = None,
         tags: Optional[List[str]] = None,
+        url: Optional[str] = ""
     ):
         self.type = "attraction"
         self.name = name
-        self.location = location
+        self.address = address
         self.description = description
         self.visit_duration = visit_duration
         self.travel_time_to_prev = travel_time_to_prev
         self.travel_time_to_next = travel_time_to_next
-        self.review = review
-        self.score = score
+        self.reviews = reviews
+        self.rating = rating
+        self.rating_count = rating_count
         self.ticket_price = ticket_price
         self.tags = tags or []
+        self.url = url or ""
 
     def __repr__(self):
         return (
-            f"Attraction(type='{self.type}', name='{self.name}', location='{self.location}', "
+            f"Attraction(type='{self.type}', name='{self.name}', address='{self.address}', "
             f"description='{self.description}', visit_duration={self.visit_duration}, "
             f"travel_time_to_prev={self.travel_time_to_prev}, travel_time_to_next={self.travel_time_to_next}, "
-            f"review='{self.review}', score={self.score}, ticket_price={self.ticket_price}, tags={self.tags})"
+            f"reviews={self.reviews}, rating={self.rating}, rating_count={self.rating_count}, "
+            f"ticket_price={self.ticket_price}, tags={self.tags}, url='{self.url}')"
         )
-
 
 class Travel:
     """Represents a travel segment in the travel plan."""
