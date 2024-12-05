@@ -17,7 +17,7 @@ if not api_key:
 
 # Check if a parameter is passed
 if len(sys.argv) != 2:
-    print("Usage: python script.py <parameter>")
+    print("Usage: python3 -m testing.test_map_api <parameter>")
     print("Parameters:")
     print("1 - text_search")
     print("2 - place_details")
