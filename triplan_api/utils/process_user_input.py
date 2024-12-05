@@ -5,14 +5,21 @@ def process_user_input(user_input):
     """
     使用 Ollama 模型解析使用者輸入，提取關鍵詞、地點、時間等資訊，返回結構化的資料。
     """
-    url = "http://localhost:11434/api/generate" 
+    url = "http://localhost:11434/api/generate"  
     prompt = f"""
-請分析以下使用者輸入，並提取關鍵資訊，包括關鍵詞、地點、時間等。請將結果以JSON格式輸出，包含以下欄位：
+請分析以下使用者輸入，提取其中的每個活動，提取其關鍵資訊，包括時間段（如早上、中午、晚上）、關鍵詞、地點、時間等。請將結果以 JSON 格式輸出，結構如下：
 {{
-    "keywords": ["<關鍵詞列表>"],
-    "locations": ["<地點列表>"],
-    "times": ["<時間資訊列表>"]
+    "activities": [
+        {{
+            "time_period": "<時間段>",
+            "keywords": ["<關鍵詞列表>"],
+            "locations": ["<地點列表>"],
+            "times": ["<時間資訊列表>"]
+        }},
+        // 更多活動...
+    ]
 }}
+
 
 使用者輸入："{user_input}"
 
@@ -22,8 +29,8 @@ def process_user_input(user_input):
     payload = {
         "model": "llama3.2",  # 替換為實際使用的模型名稱
         "prompt": prompt,
-        "temperature": 0.2,
-        "max_tokens": 300
+        "temperature": 0.5,
+        "max_tokens": 450
     }
 
 

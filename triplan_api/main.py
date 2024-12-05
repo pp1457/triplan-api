@@ -1,9 +1,16 @@
-from typing import Union
+from typing import Union, List
 
 from fastapi import FastAPI
 from pydantic import BaseModel
 
+from triplan_api.core.gen import gen
+from triplan_api.models.trip import *
+
 app = FastAPI()
+
+class TripRequest(BaseModel):
+    trip: Trip
+    user_input: str
 
 class Item(BaseModel):
     name: str
@@ -24,3 +31,11 @@ def read_item(item_id: int, q: Union[str, None] = None):
 @app.put("/items/{item_id}")
 def update_item(item_id: int, item: Item):
     return {"item_name": item.name, "item_id": item_id}
+
+@app.post("/generate_trip")
+def generate_trip(trip_request: TripRequest):
+    """
+    Endpoint to generate a trip.
+    """
+    trip = gen(trip_request.trip, trip_request.user_input)
+    return {"generated_trip": trip}
