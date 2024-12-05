@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, List
 
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -6,6 +6,10 @@ from pydantic import BaseModel
 from triplan_api.core.gen import gen
 
 app = FastAPI()
+
+class TripRequest(BaseModel):
+    trip: List[str]
+    user_input: str
 
 class Item(BaseModel):
     name: str
