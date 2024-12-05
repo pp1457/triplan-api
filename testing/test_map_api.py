@@ -10,10 +10,11 @@ api_key = os.getenv("MAP_API_KEY")
 print(f"Your 'MAP_API_KEY' is: {api_key}")
 
 # 查詢條件範例
-text_query = "台北餐廳"
+text_query = "台北101"
 latitude = 25.0174
 longitude = 121.5392
 place_id = "ChIJqS4y_ompQjQRZn8d7gQEdSE" #台大
+place_id = "ChIJH56c2rarQjQRphD9gvC8BhI"
 place_id2 = "ChIJSTLZ6barQjQRMdkCqrP3CNU" #101
 travel_mode = "DRIVE"
 

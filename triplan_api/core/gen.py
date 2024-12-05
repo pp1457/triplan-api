@@ -14,13 +14,32 @@ def process_user_input(user_input):
 # Step 2: Find the middle empty point
 def find_mid_point(current_trip):
     """
-    Find the middle empty point in the current_trip list.
-    Returns the start, end, and mid index (empty point).
+    Find the middle point of a consecutive subarray of empty (None) slots in the current_trip list.
+    Returns the previous non-None value, the next non-None value, and the index of the middle empty point.
     """
-    for i in range(1, len(current_trip) - 1):
-        if current_trip[i] is None:  # Check for empty slot
-            return current_trip[i - 1], current_trip[i + 1], i
-    return None, None, None  # No empty points found
+    n = len(current_trip)
+    i = 0
+    results = []
+
+    while i < n:
+        if current_trip[i] is None:  # Start of a None sequence
+            start = i
+            # Find the end of this None sequence
+            while i < n and current_trip[i] is None:
+                i += 1
+            end = i - 1
+
+            # Calculate the middle index of the None sequence
+            mid_index = (start + end) // 2
+            # Get previous and next non-None values
+            prev_non_none = current_trip[start - 1] if start > 0 else None
+            next_non_none = current_trip[end + 1] if end + 1 < n else None
+
+            results.append((prev_non_none, next_non_none, mid_index))
+        else:
+            i += 1
+
+    return results
 
 # Step 3: Query attractions from a mock data source
 def query_attractions(start, end, parsed_input):
