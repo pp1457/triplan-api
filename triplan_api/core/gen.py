@@ -1,7 +1,7 @@
 import os
 
 from triplan_api.utils.chat_with_ai import aquire_attraction
-from triplan_api.models.trip import Attraction, Location
+from triplan_api.models.trip import Attraction, Location, EmptySpot
 from triplan_api.utils.map_api import *
 
 # Step 1: Mock process_user_input
@@ -23,7 +23,7 @@ def find_mid_point(current_trip):
     results = (None, None, None)
 
     while i < n:
-        if current_trip[i] is None :  # Start of a None sequence
+        if isinstance(current_trip[i], EmptySpot):  # Start of a None sequence
             start = i
             # Find the end of this None sequence
             while i < n and current_trip[i] is None:
@@ -152,6 +152,8 @@ if __name__ == "__main__":
             visit_duration=0,
             travel_time_to_prev=0,
             travel_time_to_next=30,
+            estimate_start_time=time(8, 0)
+            estimate_end_time=time(8, 0)
             tags=["start"],
             description="The starting point of the journey.",
             reviews=[],
@@ -161,13 +163,18 @@ if __name__ == "__main__":
             url="",
             location=Location(latitude=40.7128, longitude=-74.0060)  # Example coordinates for New York City
         ),
-        None,  # Empty slot to be filled
+        EmptySpot(
+            estimate_start_time=time(10, 0)
+            estimate_end_time=time(12, 0)
+        ),
         Attraction(
             name="Hotel",
             address="Destination",
             visit_duration=0,
             travel_time_to_prev=30,
             travel_time_to_next=0,
+            estimate_start_time=time(23, 0)
+            estimate_end_time=time(23, 0)
             tags=["end"],
             description="The final stop of the journey.",
             reviews=["Comfortable stay!", "Great service."],

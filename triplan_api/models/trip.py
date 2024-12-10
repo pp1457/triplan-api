@@ -1,5 +1,6 @@
 from typing import List, Optional, Union
 from datetime import date, time
+from enum import Enum
 from pydantic import BaseModel
 
 # Pydantic model for DateRange
@@ -21,12 +22,20 @@ class Location(BaseModel):
     def __repr__(self):
         return f"Location(latitude={self.latitude}, longitude={self.longitude})"
 
+class TimeSlot(str, Enum):
+    MORNING = "morning"
+    BREAKFAST = "breakfast"
+    LUNCH = "lunch"
+    AFTERNOON = "afternoon"
+    DINNER = "dinner"
+    NIGHT = "night"
 
 # Pydantic model for Attraction
 class Attraction(BaseModel):
     """Represents an attraction in the travel plan."""
     name: str
     address: str
+    time_slot: TimeSlot
     description: Optional[str] = None
     visit_duration: int = 0
     travel_time_to_prev: int = 0
