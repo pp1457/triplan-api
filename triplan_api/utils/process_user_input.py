@@ -10,35 +10,35 @@ def process_user_input(user_input):
 
     # Prompt 設計
     prompt = f"""
-請分析使用者輸入的旅遊需求，提取多個短小的關鍵字，結果按以下行程階段組織：早餐、早上、午餐、下午、晚餐、晚上。
-飲食相關的請分到早餐、午餐、晚餐；旅遊相關的請分到；早上、下午、晚上。
-早上相關的請分到早餐、早上；中午下午相關的請分到午餐、下午；晚上相關的請分到晚餐、晚上。
+請分析使用者輸入的旅遊需求，提取多個短小的關鍵字，結果按以下行程階段組織：breakfast、morning、lunch、afternoon、dinner、night。
+飲食、用餐、餐廳相關的請分到breakfast、lunch、dinner；旅遊相關的請分到；morning、afternoon、night。
+morning相關的請分到breakfast、morning；中午afternoon相關的請分到lunch、afternoon；night相關的請分到dinner、night。
 若無相關內容，則關鍵字欄位維持空白。
 JSON 結構範例如下：
 {{
     "activities": [
         {{
-            "time_period": "早餐",
+            "time_period": "breakfast",
             "keywords": ["<關鍵字列表>"]
         }},
         {{
-            "time_period": "早上",
+            "time_period": "morning",
             "keywords": ["<關鍵字列表>"]
         }},
         {{
-            "time_period": "午餐",
+            "time_period": "lunch",
             "keywords": ["<關鍵字列表>"]
         }},
         {{
-            "time_period": "下午",
+            "time_period": "afternoon",
             "keywords": ["<關鍵字列表>"]
         }},
         {{
-            "time_period": "晚餐",
+            "time_period": "dinner",
             "keywords": ["<關鍵字列表>"]
         }},
         {{
-            "time_period": "晚上",
+            "time_period": "night",
             "keywords": ["<關鍵字列表>"]
         }}
     ]
