@@ -118,17 +118,17 @@ def update_trip(current_trip, mid_index, best_attraction):
     current_trip[mid_index] = best_attraction
 
 # Step 6: Recursive generation
-def gen(current_trip, user_input):
+def gen(current_trip, parsed_input):
     """
     Recursively fill in empty points in the itinerary.
     """
+
     start, end, mid_index = find_mid_point(current_trip)
     if start is None and end is None:
         print("Trip generation completed!")
         return
     
     # Mock process user input
-    parsed_input = process_user_input(user_input)
     
     # Query attractions
     attractions = query_attractions(start, end, parsed_input)

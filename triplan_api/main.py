@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 from triplan_api.core.gen import gen
 from triplan_api.models.trip import *
+from triplan_api.utils.process_user_input import *
 
 app = FastAPI()
 
@@ -37,5 +38,6 @@ def generate_trip(trip_request: TripRequest):
     """
     Endpoint to generate a trip.
     """
+    parsed_input = process_user_input(user_input)
     trip = gen(trip_request.trip, trip_request.user_input)
     return {"generated_trip": trip}

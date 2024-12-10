@@ -1,7 +1,6 @@
 from typing import List, Optional, Union
-from datetime import date
+from datetime import date, time
 from pydantic import BaseModel
-
 
 # Pydantic model for DateRange
 class DateRange(BaseModel):
@@ -32,6 +31,8 @@ class Attraction(BaseModel):
     visit_duration: int = 0
     travel_time_to_prev: int = 0
     travel_time_to_next: int = 0
+    estimate_start_time: time
+    estimate_end_time: time
     reviews: Optional[List[str]] = None
     rating: Optional[float] = None
     rating_count: Optional[int] = 0
@@ -45,11 +46,11 @@ class Attraction(BaseModel):
             f"Attraction(type='attraction', name='{self.name}', address='{self.address}', "
             f"description='{self.description}', visit_duration={self.visit_duration}, "
             f"travel_time_to_prev={self.travel_time_to_prev}, travel_time_to_next={self.travel_time_to_next}, "
+            f"estimate_start_time={self.estimate_start_time}, estimate_end_time={self.estimate_end_time}, "
             f"reviews={self.reviews}, rating={self.rating}, rating_count={self.rating_count}, "
             f"ticket_price={self.ticket_price}, tags={self.tags}, url='{self.url}', "
             f"location={self.location})"
         )
-
 
 # Pydantic model for Travel
 class Travel(BaseModel):
@@ -64,14 +65,24 @@ class Travel(BaseModel):
         return (f"Travel(type='travel', travel_mode='{self.travel_mode}', from='{self.from_location}', "
                 f"to='{self.to_location}', time={self.time}, notes='{self.notes}')")
 
+# Pydantic model for EmptySpot
+class EmptySpot(BaseModel):
+    """Represents an empty spot in the travel plan."""
+    estimate_start_time: time
+    estimate_end_time: time
 
-# Pydantic model for Trip
+    def __repr__(self):
+        return (f"EmptySpot(type='empty_spot', estimate_start_time={self.estimate_start_time}, "
+                f"estimate_end_time={self.estimate_end_time})")
+
+
+# Updated Trip class to include EmptySpot in the travel_plan
 class Trip(BaseModel):
     """Represents the entire trip."""
     title: str
     description: str
     range: DateRange
-    travel_plan: List[Union[Attraction, Travel]]
+    travel_plan: List[Union[Attraction, Travel, EmptySpot]]
 
     def __repr__(self):
         return (f"Trip(title='{self.title}', description='{self.description}', range={self.range}, "
