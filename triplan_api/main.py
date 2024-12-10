@@ -1,6 +1,8 @@
 from typing import Union, List
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 from pydantic import BaseModel
 
 from datetime import time
@@ -10,6 +12,13 @@ from triplan_api.models.trip import *
 from triplan_api.utils.process_user_input import *
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins. Replace with specific domains for security.
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods (GET, POST, PUT, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
 
 class TripRequest(BaseModel):
     trip: Trip
