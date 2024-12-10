@@ -46,7 +46,7 @@ JSON 結構範例如下：
 
 使用者輸入："{user_input}"
 
-請直接輸出 JSON 結果，不要添加額外的文字解釋。
+請直接輸出 JSON 結果，不要添加額外的文字解釋，且不要把meal丟進morning, afternoon, night。
 """
 
     payload = {
@@ -84,12 +84,33 @@ JSON 結構範例如下：
         print(f"發生錯誤：{e}")
         return None
 
+
+
+def format_activities(parsed_result):
+    """
+    將 JSON 結果格式化為簡單的文本格式。
+    """
+    if not parsed_result or "activities" not in parsed_result:
+        return "無法格式化結果，因為輸入的 JSON 結構不正確。"
+
+    formatted_output = ""
+    for activity in parsed_result["activities"]:
+        time_period = activity.get("time_period", "未知時間段")
+        keywords = " ".join(activity.get("keywords", []))
+        formatted_output += f"{time_period} {keywords}\n"
+
+    return formatted_output.strip()
+
 if __name__ == "__main__":
     print("請輸入您的旅遊需求：")
     user_input = input()
     parsed_result = process_user_input(user_input)
     if parsed_result:
-        print("解析結果：")
+        print("解析結果（JSON 格式）：")
         print(json.dumps(parsed_result, ensure_ascii=False, indent=4))
+
+        print("\n格式化結果：")
+        formatted_output = format_activities(parsed_result)
+        print(formatted_output)
     else:
         print("無法解析使用者輸入。")
