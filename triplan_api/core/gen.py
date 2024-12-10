@@ -1,7 +1,10 @@
 import os
 
+from datetime import time
+from dotenv import load_dotenv
+
 from triplan_api.utils.chat_with_ai import aquire_attraction
-from triplan_api.models.trip import Attraction, Location, EmptySpot
+from triplan_api.models.trip import Attraction, Location, EmptySpot, TimeSlot
 from triplan_api.utils.map_api import *
 
 # Step 1: Mock process_user_input
@@ -20,13 +23,13 @@ def find_mid_point(current_trip):
     """
     n = len(current_trip)
     i = 0
-    results = (None, None, None)
+    results = (None, None, None, None)
 
     while i < n:
         if isinstance(current_trip[i], EmptySpot):  # Start of a None sequence
             start = i
             # Find the end of this None sequence
-            while i < n and current_trip[i] is None:
+            while i < n and isinstance(current_trip[i], EmptySpot):
                 i += 1
             end = i - 1
 
@@ -36,7 +39,7 @@ def find_mid_point(current_trip):
             prev_non_none = current_trip[start - 1] if start > 0 else None
             next_non_none = current_trip[end + 1] if end + 1 < n else None
 
-            results = (prev_non_none, next_non_none, mid_index)
+            results = (prev_non_none, next_non_none, current_trip[mid_index], mid_index)
             break
         else:
             i += 1
@@ -44,64 +47,71 @@ def find_mid_point(current_trip):
     return results
 
 # Step 3: Query attractions from a mock data source
-#def query_attractions(start, end, parsed_input):
-#    center = Location
-#    center.lati = (start.location.latitude + end.location.latitude)
-#    center.long = (start.location.longitude + end.location.longitude)
-#
-#    candidates = text_search(parsed_input, center.lati, center.long, os.getenv("MAP_API_KEY"))
-#
+def query_attractions(target, start, end, parsed_input):
+    center = Location
+    center.lati = (start.location.latitude + end.location.latitude) / 2
+    center.long = (start.location.longitude + end.location.longitude) / 2
 
-def query_attractions(start, end, parsed_input):
-    """
-    Mock function to query attractions between start and end.
-    Replace this function with a real query to a service like Google Maps.
-    """
-    attractions = [
-        Attraction(
-            name="Museum of History",
-            address="City Center",
-            visit_duration=120,
-            travel_time_to_prev=0,
-            travel_time_to_next=30,
-            tags=["historical"],
-            description="A museum showcasing the history of the city.",
-            reviews=["Amazing artifacts!", "Very informative."],
-            rating=4.8,
-            rating_count=200,
-            ticket_price=15.0,
-            url="http://example.com/museum"
-        ),
-        Attraction(
-            name="Scenic Park",
-            address="Near River",
-            visit_duration=90,
-            travel_time_to_prev=30,
-            travel_time_to_next=30,
-            tags=["scenic", "relaxing"],
-            description="A peaceful park with beautiful river views.",
-            reviews=["Perfect for a stroll.", "Great place to relax."],
-            rating=4.5,
-            rating_count=150,
-            ticket_price=5.0,
-            url="http://example.com/park"
-        ),
-        Attraction(
-            name="Art Gallery",
-            address="Downtown",
-            visit_duration=60,
-            travel_time_to_prev=15,
-            travel_time_to_next=20,
-            tags=["art", "cultural"],
-            description="A gallery featuring contemporary art.",
-            reviews=["Impressive collection!", "A must-visit for art lovers."],
-            rating=4.7,
-            rating_count=180,
-            ticket_price=10.0,
-            url="http://example.com/gallery"
-        ),
-    ]
-    return attractions
+    load_dotenv()
+
+    candidates = text_search(parsed_input[target.time_slot], center.lati, center.long, os.getenv("MAP_API_KEY"))
+
+    print(candidates)
+
+    return candidates
+
+
+#def query_attractions(target, start, end, parsed_input):
+#    """
+#    Mock function to query attractions between start and end.
+#    Replace this function with a real query to a service like Google Maps.
+#    """
+#    
+#    attractions = [
+#        Attraction(
+#            name="Museum of History",
+#            address="City Center",
+#            visit_duration=120,
+#            travel_time_to_prev=0,
+#            travel_time_to_next=30,
+#            tags=["historical"],
+#            description="A museum showcasing the history of the city.",
+#            reviews=["Amazing artifacts!", "Very informative."],
+#            rating=4.8,
+#            rating_count=200,
+#            ticket_price=15.0,
+#            url="http://example.com/museum"
+#        ),
+#        Attraction(
+#            name="Scenic Park",
+#            address="Near River",
+#            visit_duration=90,
+#            travel_time_to_prev=30,
+#            travel_time_to_next=30,
+#            tags=["scenic", "relaxing"],
+#            description="A peaceful park with beautiful river views.",
+#            reviews=["Perfect for a stroll.", "Great place to relax."],
+#            rating=4.5,
+#            rating_count=150,
+#            ticket_price=5.0,
+#            url="http://example.com/park"
+#        ),
+#        Attraction(
+#            name="Art Gallery",
+#            address="Downtown",
+#            visit_duration=60,
+#            travel_time_to_prev=15,
+#            travel_time_to_next=20,
+#            tags=["art", "cultural"],
+#            description="A gallery featuring contemporary art.",
+#            reviews=["Impressive collection!", "A must-visit for art lovers."],
+#            rating=4.7,
+#            rating_count=180,
+#            ticket_price=10.0,
+#            url="http://example.com/gallery"
+#        ),
+#    ]
+#    return attractions
 
 # Step 4: Use `aquire_attraction` to choose the best attraction
 def choose_best_attraction(current_trip, mid_index, attractions, user_input):
@@ -123,7 +133,7 @@ def gen(current_trip, parsed_input):
     Recursively fill in empty points in the itinerary.
     """
 
-    start, end, mid_index = find_mid_point(current_trip)
+    start, end, mid, mid_index = find_mid_point(current_trip)
     if start is None and end is None:
         print("Trip generation completed!")
         return
@@ -131,7 +141,8 @@ def gen(current_trip, parsed_input):
     # Mock process user input
     
     # Query attractions
-    attractions = query_attractions(start, end, parsed_input)
+    attractions = query_attractions(mid, start, end, parsed_input)
+    print(attractions)
     
     # Use `aquire_attraction` to find the best attraction
     best_attraction = choose_best_attraction(current_trip, mid_index, attractions, user_input)
@@ -149,6 +160,7 @@ if __name__ == "__main__":
         Attraction(
             name="Home",
             address="Starting Point",
+            time_slot=TimeSlot.MORNING,
             visit_duration=0,
             travel_time_to_prev=0,
             travel_time_to_next=30,
@@ -164,12 +176,14 @@ if __name__ == "__main__":
             location=Location(latitude=40.7128, longitude=-74.0060)  # Example coordinates for New York City
         ),
         EmptySpot(
+            time_slot=TimeSlot.AFTERNOON,
             estimate_start_time=time(10, 0),
             estimate_end_time=time(12, 0)
         ),
         Attraction(
             name="Hotel",
             address="Destination",
+            time_slot=TimeSlot.NIGHT,
             visit_duration=0,
             travel_time_to_prev=30,
             travel_time_to_next=0,
@@ -186,7 +200,14 @@ if __name__ == "__main__":
         )
     ]
 
-    user_input = "I want to explore historical landmarks and scenic views along the way."
+    user_input = {
+        "morning": ["coffee", "toast", "eggs", "exercise"],
+        "night": ["rest", "relax", "movie", "sleep"],
+        "breakfast": ["cereal", "pancakes", "fruit", "yogurt"],
+        "lunch": ["sandwich", "salad", "soup", "fruit"],
+        "afternoon": ["coffee", "snack", "work", "study"],
+        "dinner": ["pasta", "steak", "salad", "vegetables"]
+    }
     gen(current_trip, user_input)
 
     # Print the final trip itinerary

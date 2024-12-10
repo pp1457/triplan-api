@@ -1,5 +1,8 @@
 import requests
 
+from triplan_api.models.trip import Attraction
+
+# Return type: List[Attraction]
 def text_search(text_query, latitude, longitude, api_key):
     """
     Calls the Google Maps Places API Text Search.
@@ -17,7 +20,7 @@ def text_search(text_query, latitude, longitude, api_key):
         'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress'
     }
     payload = {
-        "textQuery": text_query,
+        "textQuery":  " ".join(text_query),
         "locationBias": {
             "circle": {
                 "center": {
@@ -31,7 +34,8 @@ def text_search(text_query, latitude, longitude, api_key):
     }
 
     response = requests.post(url, headers=headers, json=payload)
-    return response.json()
+
+    return response.json()["places"]
 
 '''
 locationBias: Tries to return locations within the specified area, with the center defined by latitude and longitude, and radius in meters.

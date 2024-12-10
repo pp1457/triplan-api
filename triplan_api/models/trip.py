@@ -12,7 +12,6 @@ class DateRange(BaseModel):
     def __repr__(self):
         return f"DateRange(start={self.start}, end={self.end})"
 
-
 # Pydantic model for Location
 class Location(BaseModel):
     """Represents a geographic location with latitude and longitude."""
@@ -35,6 +34,7 @@ class Attraction(BaseModel):
     """Represents an attraction in the travel plan."""
     name: str
     address: str
+    place_id: str
     time_slot: TimeSlot
     description: Optional[str] = None
     visit_duration: int = 0
@@ -53,7 +53,7 @@ class Attraction(BaseModel):
     def __repr__(self):
         return (
             f"Attraction(type='attraction', name='{self.name}', address='{self.address}', "
-            f"description='{self.description}', visit_duration={self.visit_duration}, "
+            f"place_id='{self.place_id}', description='{self.description}', visit_duration={self.visit_duration}, "
             f"travel_time_to_prev={self.travel_time_to_prev}, travel_time_to_next={self.travel_time_to_next}, "
             f"estimate_start_time={self.estimate_start_time}, estimate_end_time={self.estimate_end_time}, "
             f"reviews={self.reviews}, rating={self.rating}, rating_count={self.rating_count}, "
@@ -77,13 +77,13 @@ class Travel(BaseModel):
 # Pydantic model for EmptySpot
 class EmptySpot(BaseModel):
     """Represents an empty spot in the travel plan."""
+    time_slot: TimeSlot
     estimate_start_time: time
     estimate_end_time: time
 
     def __repr__(self):
         return (f"EmptySpot(type='empty_spot', estimate_start_time={self.estimate_start_time}, "
-                f"estimate_end_time={self.estimate_end_time})")
-
+                f"estimate_end_time={self.estimate_end_time}, time_slot='{self.time_slot}')")
 
 # Updated Trip class to include EmptySpot in the travel_plan
 class Trip(BaseModel):

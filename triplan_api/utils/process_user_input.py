@@ -1,6 +1,7 @@
 import requests
 import json
 
+# Return type: Dict{key: "morning", "night"..., value: "List[str]"}
 def process_user_input(user_input):
     """
     解析使用者輸入的旅遊需求，提取並分類關鍵字，結構化輸出。
