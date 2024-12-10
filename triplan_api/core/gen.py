@@ -152,8 +152,8 @@ if __name__ == "__main__":
             visit_duration=0,
             travel_time_to_prev=0,
             travel_time_to_next=30,
-            estimate_start_time=time(8, 0)
-            estimate_end_time=time(8, 0)
+            estimate_start_time=time(8, 0),
+            estimate_end_time=time(8, 0),
             tags=["start"],
             description="The starting point of the journey.",
             reviews=[],
@@ -164,7 +164,7 @@ if __name__ == "__main__":
             location=Location(latitude=40.7128, longitude=-74.0060)  # Example coordinates for New York City
         ),
         EmptySpot(
-            estimate_start_time=time(10, 0)
+            estimate_start_time=time(10, 0),
             estimate_end_time=time(12, 0)
         ),
         Attraction(
@@ -173,8 +173,8 @@ if __name__ == "__main__":
             visit_duration=0,
             travel_time_to_prev=30,
             travel_time_to_next=0,
-            estimate_start_time=time(23, 0)
-            estimate_end_time=time(23, 0)
+            estimate_start_time=time(23, 0),
+            estimate_end_time=time(23, 0),
             tags=["end"],
             description="The final stop of the journey.",
             reviews=["Comfortable stay!", "Great service."],
