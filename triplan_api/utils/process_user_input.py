@@ -10,35 +10,35 @@ def process_user_input(user_input):
 
     # Prompt 設計
     prompt = f"""
-請分析使用者輸入的旅遊需求，提取多個短小的關鍵字，結果按以下行程階段組織：早餐、早上、午餐、下午、晚餐、晚上。
-飲食相關的請分到早餐、午餐、晚餐；旅遊相關的請分到；早上、下午、晚上。
-早上相關的請分到早餐、早上；中午下午相關的請分到午餐、下午；晚上相關的請分到晚餐、晚上。
+請分析使用者輸入的旅遊需求，提取多個短小的關鍵字，結果按以下行程階段組織：breakfast、morning、lunch、afternoon、dinner、night。
+飲食、用餐、餐廳相關的請分到breakfast、lunch、dinner；旅遊相關的請分到；morning、afternoon、night。
+morning相關的請分到breakfast、morning；中午afternoon相關的請分到lunch、afternoon；night相關的請分到dinner、night。
 若無相關內容，則關鍵字欄位維持空白。
 JSON 結構範例如下：
 {{
     "activities": [
         {{
-            "time_period": "早餐",
+            "time_period": "breakfast",
             "keywords": ["<關鍵字列表>"]
         }},
         {{
-            "time_period": "早上",
+            "time_period": "morning",
             "keywords": ["<關鍵字列表>"]
         }},
         {{
-            "time_period": "午餐",
+            "time_period": "lunch",
             "keywords": ["<關鍵字列表>"]
         }},
         {{
-            "time_period": "下午",
+            "time_period": "afternoon",
             "keywords": ["<關鍵字列表>"]
         }},
         {{
-            "time_period": "晚餐",
+            "time_period": "dinner",
             "keywords": ["<關鍵字列表>"]
         }},
         {{
-            "time_period": "晚上",
+            "time_period": "night",
             "keywords": ["<關鍵字列表>"]
         }}
     ]
@@ -46,7 +46,7 @@ JSON 結構範例如下：
 
 使用者輸入："{user_input}"
 
-請直接輸出 JSON 結果，不要添加額外的文字解釋。
+請直接輸出 JSON 結果，不要添加額外的文字解釋，且不要把meal丟進morning, afternoon, night。
 """
 
     payload = {
@@ -84,12 +84,33 @@ JSON 結構範例如下：
         print(f"發生錯誤：{e}")
         return None
 
+
+
+def format_activities(parsed_result):
+    """
+    將 JSON 結果格式化為簡單的文本格式。
+    """
+    if not parsed_result or "activities" not in parsed_result:
+        return "無法格式化結果，因為輸入的 JSON 結構不正確。"
+
+    formatted_output = ""
+    for activity in parsed_result["activities"]:
+        time_period = activity.get("time_period", "未知時間段")
+        keywords = " ".join(activity.get("keywords", []))
+        formatted_output += f"{time_period} {keywords}\n"
+
+    return formatted_output.strip()
+
 if __name__ == "__main__":
     print("請輸入您的旅遊需求：")
     user_input = input()
     parsed_result = process_user_input(user_input)
     if parsed_result:
-        print("解析結果：")
+        print("解析結果（JSON 格式）：")
         print(json.dumps(parsed_result, ensure_ascii=False, indent=4))
+
+        print("\n格式化結果：")
+        formatted_output = format_activities(parsed_result)
+        print(formatted_output)
     else:
         print("無法解析使用者輸入。")
