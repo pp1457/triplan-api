@@ -169,4 +169,4 @@ def generate_trip(trip_request: TripRequest):
         )
     ]
 
-    return {"generated_trip": trip}
+    return {"generated_trip": current_trip}
