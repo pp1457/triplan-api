@@ -1,10 +1,10 @@
 import os
-
+from typing import List, Optional
 from datetime import time
 from dotenv import load_dotenv
 
-from triplan_api.utils.chat_with_ai import aquire_attraction
-from triplan_api.models.trip import Attraction, Location, EmptySpot, TimeSlot
+from triplan_api.utils.chat_with_ai import acquire_attraction
+from triplan_api.models.trip import Attraction, Location, EmptySpot, TimeSlot, Travel
 from triplan_api.utils.map_api import *
 
 # Step 1: Mock process_user_input
@@ -46,6 +46,8 @@ def find_mid_point(current_trip):
 
     return results
 
+
+
 # Step 3: Query attractions from a mock data source
 def query_attractions(target, start, end, parsed_input):
     center = Location
@@ -55,17 +57,7 @@ def query_attractions(target, start, end, parsed_input):
     load_dotenv()
     api_key = os.getenv("MAP_API_KEY")
 
-    candidates = text_search(parsed_input[target.time_slot], center.lati, center.long, api_key)
-
-    attractions = []
-
-    travel_modes = ["DRIVE", "BICYCLE", "WALK", "TRANSIT", "TWO_WHEELER"]
-
-    for candidate in candidates:
-        attraction = place_details(candidate["id"], api_key)
-        attraction.travel_time_to_prev = routes(start.place_id, attraction.place_id, "WALK", api_key)
-        attraction.travel_time_to_next = routes(attraction.place_id, end.place_id, "WALK", api_key)
-        attractions.append(attraction)
+    attractions = get_attractions(" ".join(parsed_input[target.time_slot]), center.lati, center.long, start.place_id, end.place_id, api_key)
 
     return attractions
 
@@ -126,7 +118,7 @@ def choose_best_attraction(current_trip, mid_index, attractions, user_input):
     """
     Select the best attraction using the aquire_attraction function.
     """
-    return aquire_attraction(current_trip, mid_index, attractions, user_input)
+    return acquire_attraction(current_trip, mid_index, attractions, user_input)
 
 # Step 5: Update the current_trip with the best attraction
 def update_trip(current_trip, mid_index, best_attraction):
@@ -135,31 +127,72 @@ def update_trip(current_trip, mid_index, best_attraction):
     """
     current_trip[mid_index] = best_attraction
 
-def find_place_id(place):
+def check(place):
     load_dotenv()
     api_key = os.getenv("MAP_API_KEY")
-    result = text_search(place.address if place.address != None else place.name, -1, -1, api_key)
-    place.place_id = result["places"][0]["id"]
-    if place.address is None:
-        place.address = result["places"][0]["address"]
-    return place
 
-# Step 6: Recursive generation
+    if place.place_id == None:
+        place.place_id = get_place_id(place.address if place.address else place.name, api_key)
+
+    if place.location == None:
+        place.location = get_location(place.place_id, api_key)
+
+
+def fill_travel(current_trip):
+    load_dotenv()
+    api_key = os.getenv("MAP_API_KEY")
+    n = len(current_trip)
+    complete_trip = []
+    for i in range(n - 1):
+        complete_trip.append(current_trip[i])
+
+        start_id = current_trip[i].place_id
+        end_id = current_trip[i + 1].place_id
+
+        best_travel_mode = None
+        best_time = float('inf')
+        travel_methods = ["DRIVE", "BICYCLE", "WALK", "TRANSIT", "TWO_WHEELER"]
+
+        # Test all travel methods to find the best one
+        for travel_mode in travel_methods:
+            result = routes(origin_place_id=start_id, destination_place_id=end_id, travel_mode=travel_mode, api_key=api_key)
+            time_str = result.get('routes', [{}])[0].get('duration', '')
+
+            time = int(time_str[:-1])
+            if result and time < best_time:
+                best_time = time
+                best_travel_mode = travel_mode
+
+        # Create a Travel instance and add it to the current_trip
+        if best_travel_mode:
+            travel_instance = Travel(
+                travel_mode=best_travel_mode,
+                from_location=start_id,
+                to_location=end_id,
+                time=best_time,
+                notes=f"Selected best mode: {best_travel_mode}"
+            )
+            complete_trip.append(travel_instance)
+            
+    complete_trip.append(current_trip[-1])
+    current_trip.clear()
+    current_trip.extend(complete_trip)
+
+
 def gen(current_trip, parsed_input):
     """
     Recursively fill in empty points in the itinerary.
     """
 
     start, end, mid, mid_index = find_mid_point(current_trip)
-    if start.place_id == None:
-        start = find_place_id(start)
-    if end.place_id == None:
-        end = find_place_id(end)
-
 
     if start is None and end is None:
+        fill_travel(current_trip)
         print("Trip generation completed!")
         return
+
+    check(start)
+    check(end)
     
     # Mock process user input
     
@@ -181,9 +214,9 @@ if __name__ == "__main__":
     # Initialize the trip with Attraction objects and None for empty slots
     current_trip = [
         Attraction(
-            name="Home",
-            address="Starting Point",
-            place_id="123",
+            name="NTU",
+            address=None,
+            place_id=None,
             time_slot=TimeSlot.MORNING,
             visit_duration=0,
             travel_time_to_prev=0,
@@ -205,9 +238,9 @@ if __name__ == "__main__":
             estimate_end_time=time(12, 0)
         ),
         Attraction(
-            name="Hotel",
-            address="Destination",
-            place_id="123",
+            name="台北車站",
+            address=None,
+            place_id=None,
             time_slot=TimeSlot.NIGHT,
             visit_duration=0,
             travel_time_to_prev=30,
@@ -240,5 +273,7 @@ if __name__ == "__main__":
     for i, stop in enumerate(current_trip, start=1):
         if isinstance(stop, Attraction):
             print(f"Stop {i}: {stop.name} - {stop.address}")
+        elif isinstance(stop, Travel):
+            print(f"Travel: {stop.travel_mode} - {stop.time}")
         elif stop is None:
             print(f"Stop {i}: Empty slot")

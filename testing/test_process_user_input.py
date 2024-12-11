@@ -1,17 +1,12 @@
-# \testing> python3 .\test_process_user_input.py
+# \triplan-api> python3 -m testing.test_process_user_input
+
+from triplan_api.utils import process_user_input as p
 
 import os
-import sys
-import json
-
-# 將 triplan_api/utils/ 加入模組搜尋路徑
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './../triplan_api/utils/')))
-
-from process_user_input import process_user_input
 
 # 定義檔案路徑
-INPUT_FILE = './user_input'
-OUTPUT_FILE = './user_output'
+INPUT_FILE = './testing/user_input'
+OUTPUT_FILE = './testing/user_output'
 
 def main():
     # 確保輸出檔案存在或可寫
@@ -31,23 +26,28 @@ def main():
     for user_input in inputs:
         user_input = user_input.strip()  # 去除換行符號和空白
         if not user_input:
-            continue
+            continue  # 跳過空輸入
 
         try:
-            # 呼叫目標函數並轉換為字串
-            output = process_user_input(user_input)
-            output_str = json.dumps(output, ensure_ascii=False) + '\n'
-            outputs.append(output_str)
+            # 呼叫目標函數並取得結果
+            result_dict = p.process_user_input(user_input)
+            output = "[ " + p.activity_to_text(result_dict, 1) + " ]"
+            for option in range(2, 7):
+                output = output + " " + "[ " + p.activity_to_text(result_dict, option)+ " ]"
+            
+            output = output + "\n"
+            outputs.append(output)
         except Exception as e:
             # 若處理過程中出現錯誤，記錄錯誤訊息
-            outputs.append(f"Error processing input '{user_input}': {str(e)}\n")
-        
-        print(f"teatcase {count} done.")
-        count = count + 1
+            outputs.append(f"Testcase {count} Error: {str(e)}\n")
+
+        print(f"Testcase {count} done.")
+        count += 1
 
     # 寫入輸出檔案
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as outfile:
         outfile.writelines(outputs)
+
 
     print(f"Processing complete.")
 

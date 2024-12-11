@@ -33,8 +33,8 @@ class TimeSlot(str, Enum):
 class Attraction(BaseModel):
     """Represents an attraction in the travel plan."""
     name: str
-    address: str
-    place_id: str
+    address: Optional[str]
+    place_id: Optional[str]
     time_slot: Optional[TimeSlot] = None
     description: Optional[str] = None
     visit_duration: int = 0

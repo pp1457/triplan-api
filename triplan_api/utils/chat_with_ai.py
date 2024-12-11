@@ -10,7 +10,7 @@ llm = ChatOllama(
     temperature=0,
 )
 
-def aquire_attraction(current_trip, pos_to_put, attractions_list, requirements):
+def acquire_attraction(current_trip, pos_to_put, attractions_list, requirements):
     """
     Function to select the best attraction to place at a specific position in the current trip.
 
@@ -30,12 +30,12 @@ def aquire_attraction(current_trip, pos_to_put, attractions_list, requirements):
     )
 
     attractions_description = "\n".join(
-        f"- Name: {attr.name}, Address: {attr.address}, Visit Duration: {attr.visit_duration} min, "
+        f"ID: {i}, Name: {attr.name}, Address: {attr.address}, Visit Duration: {attr.visit_duration} min, "
         f"Rating: {attr.rating or 'N/A'} ({attr.rating_count} reviews), "
         f"Price level: {attr.price_level or 'N/A'}, Tags: {', '.join(attr.tags) if attr.tags else 'None'}, "
         f"Description: {attr.description or 'No description available.'}, "
         f"Reviews: {'; '.join(attr.reviews[:3]) if attr.reviews else 'No reviews available.'}"
-        for attr in attractions_list
+        for i, attr in enumerate(attractions_list)
     )
 
     # Prepare the system and user messages
@@ -43,7 +43,7 @@ def aquire_attraction(current_trip, pos_to_put, attractions_list, requirements):
         "You are a helpful assistant that picks the best attraction to include in a travel itinerary. "
         "Your goal is to consider the travel smoothness of the trip, avoid unnecessary backtracking, "
         "and ensure the trip is efficient and enjoyable. You will also account for user requirements "
-        "and preferences provided as input. Respond only with the name of the selected attraction."
+        "and preferences provided as input. Respond only with the ID of the selected attraction."
     )
 
     human_message = (
@@ -52,7 +52,7 @@ def aquire_attraction(current_trip, pos_to_put, attractions_list, requirements):
         f"The attraction will be placed at position {pos_to_put + 1}.\n"
         f"User requirements: {requirements}\n\n"
         "Based on the above details, which attraction is the best fit for this position? "
-        "Respond with only the name of the selected attraction."
+        "Respond with only the number (ID of the selected attraction.)"
     )
 
     # Construct messages for the LLM
@@ -64,19 +64,22 @@ def aquire_attraction(current_trip, pos_to_put, attractions_list, requirements):
     # Invoke the LLM
     response = llm.invoke(messages)
 
-    # Extract and validate the selected attraction name
-    selected_name = response.content.strip()
-    print(f"AI Response: {selected_name}")
+    # Extract and validate the selected attraction ID
+    selected_id_str = response.content.strip()
 
-    # Match the selected name with the attractions list
-    selected_attraction = next(
-        (attr for attr in attractions_list if attr.name.lower() == selected_name.lower()), None
-    )
-
-    if selected_attraction is None:
+    # Convert the response to an integer
+    try:
+        selected_id = int(selected_id_str)
+    except ValueError:
         raise ValueError(
-            f"The AI selected '{selected_name}', which does not match any attraction in the provided list. "
-            "Please ensure the AI response is accurate and corresponds to a valid attraction name."
+            f"The AI response '{selected_id_str}' is not a valid integer ID. "
+            "Please ensure the AI is instructed to respond with a valid ID."
         )
 
-    return selected_attraction
+    # Match the selected ID with the attractions list
+    if not (0 <= selected_id < len(attractions_list)):
+        raise ValueError(
+            f"The selected ID '{selected_id}' is out of range. Ensure the response is valid and within the list of attractions."
+        )
+
+    return attractions_list[selected_id]
