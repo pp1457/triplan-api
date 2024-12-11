@@ -57,7 +57,7 @@ def query_attractions(target, start, end, parsed_input):
     load_dotenv()
     api_key = os.getenv("MAP_API_KEY")
 
-    attractions = get_attractions(" ".join(parsed_input[target.time_slot]), center.lati, center.long, start.place_id, end.place_id, api_key)
+    attractions = get_attractions(target.time_slot + " " + " ".join(parsed_input[target.time_slot]), center.lati, center.long, start.place_id, end.place_id, api_key)
 
     return attractions
 
@@ -146,6 +146,10 @@ def fill_travel(current_trip):
     for i in range(n - 1):
         complete_trip.append(current_trip[i])
 
+        if not isinstance(current_trip[i], Attraction) or not isinstance(current_trip[i+1], Attraction):
+            complete_trip.appedn(current_trip[i+1])
+            continue
+
         start_id = current_trip[i].place_id
         end_id = current_trip[i + 1].place_id
 
@@ -179,7 +183,7 @@ def fill_travel(current_trip):
     current_trip.extend(complete_trip)
 
 
-def gen(current_trip, parsed_input):
+def gen(current_trip, parsed_input, user_input):
     """
     Recursively fill in empty points in the itinerary.
     """
@@ -205,7 +209,7 @@ def gen(current_trip, parsed_input):
     
     # Update the trip and recurse
     update_trip(current_trip, mid_index, best_attraction)
-    gen(current_trip, user_input)
+    gen(current_trip, parsed_input, user_input)
 
     return current_trip
 
@@ -258,7 +262,7 @@ if __name__ == "__main__":
         )
     ]
 
-    user_input = {
+    parsed_input = {
         "morning": ["coffee", "toast", "eggs", "exercise"],
         "night": ["rest", "relax", "movie", "sleep"],
         "breakfast": ["cereal", "pancakes", "fruit", "yogurt"],
@@ -266,7 +270,7 @@ if __name__ == "__main__":
         "afternoon": ["coffee", "snack", "work", "study"],
         "dinner": ["pasta", "steak", "salad", "vegetables"]
     }
-    gen(current_trip, user_input)
+    gen(current_trip, parsed_input, "Hi")
 
     # Print the final trip itinerary
     print("Final trip itinerary:")
