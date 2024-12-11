@@ -38,8 +38,8 @@ class Attraction(BaseModel):
     time_slot: Optional[TimeSlot] = None
     description: Optional[str] = None
     visit_duration: int = 0
-    travel_time_to_prev: int = 0
-    travel_time_to_next: int = 0
+    travel_time_to_prev: time
+    travel_time_to_next: time
     estimate_start_time: time
     estimate_end_time: time
     reviews: Optional[List[str]] = None

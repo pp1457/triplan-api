@@ -1,4 +1,5 @@
 import os
+import logging
 from typing import List, Optional
 from datetime import time
 from dotenv import load_dotenv
@@ -6,6 +7,18 @@ from dotenv import load_dotenv
 from triplan_api.utils.chat_with_ai import acquire_attraction
 from triplan_api.models.trip import Attraction, Location, EmptySpot, TimeSlot, Travel
 from triplan_api.utils.map_api import *
+
+
+#logging.basicConfig(
+#    level=logging.INFO,  # Set the logging level (INFO, DEBUG, WARNING, ERROR, CRITICAL)
+#    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Log format
+#    handlers=[
+#        logging.FileHandler("app.log"),  # Logs to 'app.log' file
+#        logging.StreamHandler()  # Optionally log to console as well
+#    ]
+#)
+#
+#logger = logging.getLogger(__name__)  # Get the logger
 
 # Step 1: Mock process_user_input
 def process_user_input(user_input):
@@ -127,17 +140,6 @@ def update_trip(current_trip, mid_index, best_attraction):
     """
     current_trip[mid_index] = best_attraction
 
-def check(place):
-    load_dotenv()
-    api_key = os.getenv("MAP_API_KEY")
-
-    if place.place_id == None:
-        place.place_id = get_place_id(place.address if place.address else place.name, api_key)
-
-    if place.location == None:
-        place.location = get_location(place.place_id, api_key)
-
-
 def fill_travel(current_trip):
     load_dotenv()
     api_key = os.getenv("MAP_API_KEY")
@@ -147,7 +149,7 @@ def fill_travel(current_trip):
         complete_trip.append(current_trip[i])
 
         if not isinstance(current_trip[i], Attraction) or not isinstance(current_trip[i+1], Attraction):
-            complete_trip.appedn(current_trip[i+1])
+            complete_trip.append(current_trip[i+1])
             continue
 
         start_id = current_trip[i].place_id
@@ -182,6 +184,12 @@ def fill_travel(current_trip):
     current_trip.clear()
     current_trip.extend(complete_trip)
 
+def check(place):
+    load_dotenv()
+    api_key = os.getenv("MAP_API_KEY")
+    if place.place_id.strip() == '':
+        place.place_id = get_place_id(place.address if place.address.strip() != '' else place.name, api_key)
+
 
 def gen(current_trip, parsed_input, user_input):
     """
@@ -195,8 +203,13 @@ def gen(current_trip, parsed_input, user_input):
         print("Trip generation completed!")
         return
 
+    load_dotenv()
+    api_key = os.getenv("MAP_API_KEY")
+
     check(start)
     check(end)
+    place_detail(start, api_key)
+    place_detail(end, api_key)
     
     # Mock process user input
     

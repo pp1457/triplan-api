@@ -1,7 +1,9 @@
 import requests
+import logging
+
 from datetime import time
 
-from triplan_api.models.trip import Attraction
+from triplan_api.models.trip import Attraction, Location
 
 """Attraction
     2.name: str
@@ -24,6 +26,18 @@ from triplan_api.models.trip import Attraction
 
 filled in function: 1.get_attractions 2.place_detail 3.routes x.default
 """
+
+
+#logging.basicConfig(
+#    level=logging.INFO,  # Set the logging level (INFO, DEBUG, WARNING, ERROR, CRITICAL)
+#    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Log format
+#    handlers=[
+#        logging.FileHandler("app.log"),  # Logs to 'app.log' file
+#        logging.StreamHandler()  # Optionally log to console as well
+#    ]
+#)
+#
+#logger = logging.getLogger(__name__)  # Get the logger
 
 def get_attractions(text_query, latitude, longitude, prev_id, next_id, api_key): 
     """
@@ -91,8 +105,13 @@ def get_attractions(text_query, latitude, longitude, prev_id, next_id, api_key):
 
     # fill travel_time
     for attraction in attractions:
-        routes_result = routes(prev_id, attraction.place_id, "DRIVE", api_key)
-        time_str = routes_result.get('routes', [{}])[0].get('duration', '')
+        try:
+            routes_result = routes(prev_id, attraction.place_id, "DRIVE", api_key)
+            time_str = routes_result.get('routes', [{}])[0].get('duration', '')
+        except Exception as e:
+            print(f"Error occurred while fetching routes for attraction {attraction.name}: {e}")
+            time_str = None  # or set to some default value if necessary
+
         time_s = int(time_str[:-1])
         h, remainder = divmod(time_s, 3600)
         m, s = divmod(remainder, 60)
@@ -151,7 +170,11 @@ def place_detail(attraction, api_key):
             attraction.reviews = [review.get('text', {}).get('text', '') for review in data.get('reviews', [])]
             attraction.rating_count = data.get('userRatingCount', 0)
             attraction.description = data.get('editorialSummary', {}).get('text', '')
-            attraction.location = data.get('location', None)
+            location_data = data.get('location', {})
+            attraction.location = Location(
+                latitude=location_data.get('latitude', None),
+                longitude=location_data.get('longitude', None)
+            )
 
         else:
             print(f"Error fetching details for place_id {place_id}: {response.status_code}")
@@ -195,7 +218,11 @@ def routes(origin_place_id, destination_place_id, travel_mode, api_key):
         "travelMode": travel_mode
     }
 
-    response = requests.post(url, headers=headers, json=data)
+    try:
+        response = requests.post(url, headers=headers, json=data)
+    except Exception as e:
+        print(f"An error occurred in routes: {e}")
+
     return response.json()
 
 ##############################################################
