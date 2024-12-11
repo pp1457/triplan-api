@@ -86,7 +86,8 @@ def get_attractions(text_query, latitude, longitude, prev_id, next_id, api_key):
     ]
     
     # fill more fields
-    place_detail(attractions, api_key)
+    for attraction in attractions:
+        place_detail(attraction, api_key)
 
     # fill travel_time
     for attraction in attractions:
@@ -117,49 +118,48 @@ distance requested but not used.
 
 ##############################################################
 
-def place_detail(attractions, api_key):
+def place_detail(attraction, api_key):
     """
-    Calls the Google Maps Places API Place Details for each attraction and updates their fields.
+    Calls the Google Maps Places API Place Details to updates attraction's fields.
 
-    :param attractions: List of Attraction objects with place_id already filled
+    :param attraction: Attraction object with place_id already filled
     :param api_key: Google Maps API key
     :return: Integer representing success or failure (1 for success, 0 for failure)
     """
-    for attraction in attractions:
-        place_id = attraction.place_id
-        
-        # Construct the URL and headers for the API call
-        url = f'https://places.googleapis.com/v1/places/{place_id}?languageCode=zh-TW'
-        headers = {
-            'Content-Type': 'application/json',
-            'X-Goog-Api-Key': api_key,
-            'X-Goog-FieldMask': 'displayName,types,formattedAddress,rating,googleMapsUri,reviews.text.text,regularOpeningHours,priceLevel,editorialSummary.text,userRatingCount,location'
-        }
-        
-        # Make the API request
-        try:
-            response = requests.get(url, headers=headers)
-            if response.status_code == 200:
-                # Parse the API response
-                data = response.json()
-                
-                # Update attraction's fields with the API data
-                attraction.name = data.get('displayName', {}).get('text','')
-                attraction.address = data.get('formattedAddress', '')
-                attraction.rating = data.get('rating', None)
-                attraction.url = data.get('googleMapsUri', '')
-                attraction.reviews = [review.get('text', {}).get('text', '') for review in data.get('reviews', [])]
-                attraction.rating_count = data.get('userRatingCount', 0)
-                attraction.description = data.get('editorialSummary', {}).get('text', '')
-                attraction.location = data.get('location', None)
+    place_id = attraction.place_id
+    
+    # Construct the URL and headers for the API call
+    url = f'https://places.googleapis.com/v1/places/{place_id}?languageCode=zh-TW'
+    headers = {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': api_key,
+        'X-Goog-FieldMask': 'displayName,types,formattedAddress,rating,googleMapsUri,reviews.text.text,regularOpeningHours,priceLevel,editorialSummary.text,userRatingCount,location'
+    }
+    
+    # Make the API request
+    try:
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            # Parse the API response
+            data = response.json()
+            
+            # Update attraction's fields with the API data
+            attraction.name = data.get('displayName', {}).get('text','')
+            attraction.address = data.get('formattedAddress', '')
+            attraction.rating = data.get('rating', None)
+            attraction.url = data.get('googleMapsUri', '')
+            attraction.reviews = [review.get('text', {}).get('text', '') for review in data.get('reviews', [])]
+            attraction.rating_count = data.get('userRatingCount', 0)
+            attraction.description = data.get('editorialSummary', {}).get('text', '')
+            attraction.location = data.get('location', None)
 
-            else:
-                print(f"Error fetching details for place_id {place_id}: {response.status_code}")
-                return 0
-
-        except Exception as e:
-            print(f"An error occurred while fetching place details for {place_id}: {e}")
+        else:
+            print(f"Error fetching details for place_id {place_id}: {response.status_code}")
             return 0
+
+    except Exception as e:
+        print(f"An error occurred while fetching place details for {place_id}: {e}")
+        return 0
 
     return 1
 
