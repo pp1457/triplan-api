@@ -187,8 +187,8 @@ def fill_travel(current_trip):
 def check(place):
     load_dotenv()
     api_key = os.getenv("MAP_API_KEY")
-    if place.place_id.strip() == '':
-        place.place_id = get_place_id(place.address if place.address.strip() != '' else place.name, api_key)
+    if place.place_id == None or place.place_id.strip() == '':
+        place.place_id = get_place_id(place.address if (place.address != None and place.address.strip() != '') else place.name, api_key)
 
 
 def gen(current_trip, parsed_input, user_input):
