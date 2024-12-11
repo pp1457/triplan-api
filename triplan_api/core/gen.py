@@ -53,13 +53,21 @@ def query_attractions(target, start, end, parsed_input):
     center.long = (start.location.longitude + end.location.longitude) / 2
 
     load_dotenv()
+    api_key = os.getenv("MAP_API_KEY")
 
-    candidates = text_search(parsed_input[target.time_slot], center.lati, center.long, os.getenv("MAP_API_KEY"))
+    candidates = text_search(parsed_input[target.time_slot], center.lati, center.long, api_key)
 
-    print(candidates)
+    attractions = []
 
-    return candidates
+    travel_modes = ["DRIVE", "BICYCLE", "WALK", "TRANSIT", "TWO_WHEELER"]
 
+    for candidate in candidates:
+        attraction = place_details(candidate["id"], api_key)
+        attraction.travel_time_to_prev = routes(start.place_id, attraction.place_id, "WALK", api_key)
+        attraction.travel_time_to_next = routes(attraction.place_id, end.place_id, "WALK", api_key)
+        attractions.append(attraction)
+
+    return attractions
 
 #def query_attractions(target, start, end, parsed_input):
 #    """
@@ -127,6 +135,15 @@ def update_trip(current_trip, mid_index, best_attraction):
     """
     current_trip[mid_index] = best_attraction
 
+def find_place_id(place):
+    load_dotenv()
+    api_key = os.getenv("MAP_API_KEY")
+    result = text_search(place.address if place.address != None else place.name, -1, -1, api_key)
+    place.place_id = result["places"][0]["id"]
+    if place.address is None:
+        place.address = result["places"][0]["address"]
+    return place
+
 # Step 6: Recursive generation
 def gen(current_trip, parsed_input):
     """
@@ -134,6 +151,12 @@ def gen(current_trip, parsed_input):
     """
 
     start, end, mid, mid_index = find_mid_point(current_trip)
+    if start.place_id == None:
+        start = find_place_id(start)
+    if end.place_id == None:
+        end = find_place_id(end)
+
+
     if start is None and end is None:
         print("Trip generation completed!")
         return
@@ -142,7 +165,7 @@ def gen(current_trip, parsed_input):
     
     # Query attractions
     attractions = query_attractions(mid, start, end, parsed_input)
-    print(attractions)
+
     
     # Use `aquire_attraction` to find the best attraction
     best_attraction = choose_best_attraction(current_trip, mid_index, attractions, user_input)
@@ -160,6 +183,7 @@ if __name__ == "__main__":
         Attraction(
             name="Home",
             address="Starting Point",
+            place_id="123",
             time_slot=TimeSlot.MORNING,
             visit_duration=0,
             travel_time_to_prev=0,
@@ -183,6 +207,7 @@ if __name__ == "__main__":
         Attraction(
             name="Hotel",
             address="Destination",
+            place_id="123",
             time_slot=TimeSlot.NIGHT,
             visit_duration=0,
             travel_time_to_prev=30,

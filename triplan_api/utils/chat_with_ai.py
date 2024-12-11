@@ -32,7 +32,7 @@ def aquire_attraction(current_trip, pos_to_put, attractions_list, requirements):
     attractions_description = "\n".join(
         f"- Name: {attr.name}, Address: {attr.address}, Visit Duration: {attr.visit_duration} min, "
         f"Rating: {attr.rating or 'N/A'} ({attr.rating_count} reviews), "
-        f"Ticket Price: {attr.ticket_price or 'N/A'}, Tags: {', '.join(attr.tags) if attr.tags else 'None'}, "
+        f"Price level: {attr.price_level or 'N/A'}, Tags: {', '.join(attr.tags) if attr.tags else 'None'}, "
         f"Description: {attr.description or 'No description available.'}, "
         f"Reviews: {'; '.join(attr.reviews[:3]) if attr.reviews else 'No reviews available.'}"
         for attr in attractions_list

@@ -35,7 +35,7 @@ class Attraction(BaseModel):
     name: str
     address: str
     place_id: str
-    time_slot: TimeSlot
+    time_slot: Optional[TimeSlot] = None
     description: Optional[str] = None
     visit_duration: int = 0
     travel_time_to_prev: int = 0
@@ -45,7 +45,7 @@ class Attraction(BaseModel):
     reviews: Optional[List[str]] = None
     rating: Optional[float] = None
     rating_count: Optional[int] = 0
-    ticket_price: Optional[float] = None
+    price_level: Optional[str] = None
     tags: Optional[List[str]] = None
     url: Optional[str] = ""
     location: Optional[Location] = None
@@ -57,7 +57,7 @@ class Attraction(BaseModel):
             f"travel_time_to_prev={self.travel_time_to_prev}, travel_time_to_next={self.travel_time_to_next}, "
             f"estimate_start_time={self.estimate_start_time}, estimate_end_time={self.estimate_end_time}, "
             f"reviews={self.reviews}, rating={self.rating}, rating_count={self.rating_count}, "
-            f"ticket_price={self.ticket_price}, tags={self.tags}, url='{self.url}', "
+            f"ticket_price={self.price_level}, tags={self.tags}, url='{self.url}', "
             f"location={self.location})"
         )
 

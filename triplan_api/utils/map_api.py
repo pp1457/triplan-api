@@ -1,6 +1,7 @@
 import requests
+from datetime import time
 
-from triplan_api.models.trip import Attraction
+from triplan_api.models.trip import *
 
 # Return type: List[Attraction]
 def text_search(text_query, latitude, longitude, api_key):
@@ -45,13 +46,13 @@ By default, results are sorted by relevance. To sort by distance, add rankPrefer
 
 ##############################################################
 
-def place_details(place_id, api_key):
+def place_details(place_id: str, api_key: str) -> Attraction:
     """
-    Calls the Google Maps Places API Place Details.
+    Calls the Google Maps Places API Place Details and maps the response to an Attraction instance.
 
     :param place_id: Unique ID of the location
     :param api_key: Google Maps API key
-    :return: JSON (type, address, rating, URL, review count, name, description, up to five reviews)
+    :return: Attraction instance
     """
     url = f'https://places.googleapis.com/v1/places/{place_id}?languageCode=zh-TW'
     headers = {
@@ -61,7 +62,33 @@ def place_details(place_id, api_key):
     }
 
     response = requests.get(url, headers=headers)
-    return response.json()
+    data = response.json()
+
+    # Parse response into Attraction instance
+    attraction = Attraction(
+        name=data.get('displayName', '')["text"],
+        address=data.get('formattedAddress', ''),
+        place_id=place_id,
+        time_slot=None,
+        description=data.get('editorialSummary', {}).get('text', None),
+        visit_duration=0,  # Populate based on your logic
+        travel_time_to_prev=0,  # Populate based on your logic
+        travel_time_to_next=0,  # Populate based on your logic
+        estimate_start_time=time(9, 0),  # Example value
+        estimate_end_time=time(17, 0),  # Example value
+        reviews=[review['text']['text'] for review in data.get('reviews', [])[:5]] if 'reviews' in data else None,
+        rating=data.get('rating', None),
+        rating_count=data.get('userRatingCount', 0),
+        ticket_price=data.get('priceLevel', None),
+        tags=data.get('types', []),
+        url=data.get('googleMapsUri', ''),
+        location=Location(
+            latitude=data.get('location', {}).get('latitude', 0.0),
+            longitude=data.get('location', {}).get('longitude', 0.0)
+        ) if 'location' in data else None
+    )
+
+    return attraction
 
 ##############################################################
 
