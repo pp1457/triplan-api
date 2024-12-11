@@ -4,8 +4,8 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import AIMessage
 
 from triplan_api.models.trip import *
-
 llm = ChatOllama(
+    base_url="https://meow1.csie.ntu.edu.tw:11434",
     model="llama3.1",
     temperature=0,
 )
