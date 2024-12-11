@@ -1,3 +1,4 @@
+import logging
 from langchain_openai import ChatOpenAI
 from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
@@ -9,6 +10,9 @@ llm = ChatOllama(
     model="llama3.2",
     temperature=0,
 )
+
+# Disable httpx INFO and DEBUG logs (set to WARNING or higher)
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
 def acquire_attraction(current_trip, pos_to_put, attractions_list, requirements):
     """
