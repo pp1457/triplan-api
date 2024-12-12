@@ -37,11 +37,11 @@ class Attraction(BaseModel):
     place_id: Optional[str]
     time_slot: Optional[TimeSlot] = None
     description: Optional[str] = None
-    visit_duration: int = 0
-    travel_time_to_prev: time
-    travel_time_to_next: time
-    estimate_start_time: time
-    estimate_end_time: time
+    visit_duration: Optional[int] = 0
+    travel_time_to_prev: Optional[time]
+    travel_time_to_next: Optional[time]
+    estimate_start_time: Optional[time]
+    estimate_end_time: Optional[time]
     reviews: Optional[List[str]] = None
     rating: Optional[float] = None
     rating_count: Optional[int] = 0
@@ -78,8 +78,8 @@ class Travel(BaseModel):
 class EmptySpot(BaseModel):
     """Represents an empty spot in the travel plan."""
     time_slot: TimeSlot
-    estimate_start_time: time
-    estimate_end_time: time
+    estimate_start_time: Optional[time]
+    estimate_end_time: Optional[time]
 
     def __repr__(self):
         return (f"EmptySpot(type='empty_spot', estimate_start_time={self.estimate_start_time}, "
@@ -88,9 +88,9 @@ class EmptySpot(BaseModel):
 # Updated Trip class to include EmptySpot in the travel_plan
 class Trip(BaseModel):
     """Represents the entire trip."""
-    title: str
-    description: str
-    range: DateRange
+    title: Optional[str]
+    description: Optional[str]
+    range: Optional[DateRange]
     travel_plan: List[Union[Attraction, Travel, EmptySpot]]
 
     def __repr__(self):
