@@ -179,7 +179,7 @@ def fill_travel(current_trip):
                 from_location=start_name,
                 to_location=end_name,
                 time=best_time,
-                notes=f"Selected best mode: {best_travel_mode}"
+                notes=f"{best_travel_mode}"
             )
             complete_trip.append(travel_instance)
             
