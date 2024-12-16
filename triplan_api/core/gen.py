@@ -184,8 +184,7 @@ def fill_travel(current_trip):
             complete_trip.append(travel_instance)
             
     complete_trip.append(current_trip[-1])
-    current_trip.clear()
-    current_trip.extend(complete_trip)
+    return complete_trip
 
 def check(place):
     load_dotenv()
@@ -202,9 +201,9 @@ def gen(current_trip, parsed_input, user_input):
     start, end, mid, mid_index = find_mid_point(current_trip)
 
     if start is None and end is None:
-        fill_travel(current_trip)
+        complete_trip = fill_travel(current_trip)
         print("Trip generation completed!")
-        return
+        return complete_trip
 
     load_dotenv()
     api_key = os.getenv("MAP_API_KEY")
@@ -225,9 +224,7 @@ def gen(current_trip, parsed_input, user_input):
     
     # Update the trip and recurse
     update_trip(current_trip, mid_index, best_attraction)
-    gen(current_trip, parsed_input, user_input)
-
-    return current_trip
+    return gen(current_trip, parsed_input, user_input)
 
 # Example usage
 if __name__ == "__main__":

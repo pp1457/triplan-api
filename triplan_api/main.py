@@ -50,7 +50,8 @@ def generate_trip(trip_request: TripRequest):
     Endpoint to generate a trip.
     """
     parsed_input = process_user_input(trip_request.user_input)
-    current_trip = gen(trip_request.trip.travel_plan, parsed_input, trip_request.user_input)
+    input_trip = [item for item in trip_request.trip.travel_plan if not isinstance(item, Travel)]
+    current_trip = gen(input_trip, parsed_input, trip_request.user_input)
 
 #    current_trip = [
 #        Attraction(
