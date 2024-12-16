@@ -155,6 +155,9 @@ def fill_travel(current_trip):
         start_id = current_trip[i].place_id
         end_id = current_trip[i + 1].place_id
 
+        start_name = current_trip[i].name
+        end_name = current_trip[i+1].name
+
         best_travel_mode = None
         best_time = float('inf')
         travel_methods = ["DRIVE", "BICYCLE", "WALK", "TRANSIT", "TWO_WHEELER"]
@@ -173,8 +176,8 @@ def fill_travel(current_trip):
         if best_travel_mode:
             travel_instance = Travel(
                 travel_mode=best_travel_mode,
-                from_location=start_id,
-                to_location=end_id,
+                from_location=start_name,
+                to_location=end_name,
                 time=best_time,
                 notes=f"Selected best mode: {best_travel_mode}"
             )
