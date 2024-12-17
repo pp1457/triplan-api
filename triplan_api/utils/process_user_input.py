@@ -15,6 +15,7 @@ def process_user_input(user_input):
     prompt = f"""
 請分析使用者輸入的旅遊需求，提取多個短小的關鍵字，結果按以下行程階段組織：breakfast、morning、lunch、afternoon、dinner、night。
 飲食、餐廳相關的關鍵字分到breakfast、lunch、dinner。
+對於所有不確定時間的關鍵字，請放到general。
 早餐相關的關鍵字請分到breakfast，午餐相關的關鍵字請分到lunch，晚餐相關的關鍵字請分到dinner。
 非飲食活動且旅遊相關的關鍵字，請按照早上、下午、晚上，分別分到morning、afternoon、night。
 若無相關內容，則關鍵字欄位維持空白。
@@ -43,6 +44,10 @@ JSON 結構範例如下：
         }},
         {{
             "time_period": "night",
+            "keywords": ["<關鍵字列表>"]
+        }},
+        {{
+            "time_period": "general",
             "keywords": ["<關鍵字列表>"]
         }}
     ]
@@ -108,7 +113,8 @@ JSON 結構範例如下：
         "lunch": [],
         "afternoon": [],
         "dinner": [],
-        "night": []
+        "night": [],
+        "general": []
     }
 
     # 填充字典
@@ -137,7 +143,8 @@ def activity_to_text(activities, option):
         3: "午餐",
         4: "下午",
         5: "晚餐",
-        6: "晚上"
+        6: "晚上",
+        7: "未知"
     }
     
     # 時間段對應的字典鍵
@@ -147,12 +154,13 @@ def activity_to_text(activities, option):
         3: "lunch",
         4: "afternoon",
         5: "dinner",
-        6: "night"
+        6: "night",
+        7: "general"
     }
     
     # 驗證 option 是否有效
     if option not in time_period_map:
-        raise ValueError("Invalid option. Option must be a number between 1 and 6.")
+        raise ValueError("Invalid option. Option must be a number between 1 and 7.")
     
     # 獲取對應的時間段名稱和活動
     time_period_name = time_period_map[option]
@@ -170,7 +178,7 @@ if __name__ == "__main__":
     result_dict = process_user_input(user_input)
     if result_dict:
         print(result_dict)
-        for option in range(1, 7):
+        for option in range(1, 8):
             result_text = activity_to_text(result_dict, option)
             print(result_text)
     else:

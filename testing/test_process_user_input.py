@@ -32,7 +32,7 @@ def main():
             # 呼叫目標函數並取得結果
             result_dict = p.process_user_input(user_input)
             output = "[ " + p.activity_to_text(result_dict, 1) + " ]"
-            for option in range(2, 7):
+            for option in range(2, 8):
                 output = output + " " + "[ " + p.activity_to_text(result_dict, option)+ " ]"
             
             output = output + "\n"
