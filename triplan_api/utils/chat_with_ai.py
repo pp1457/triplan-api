@@ -7,7 +7,7 @@ from langchain_core.messages import AIMessage
 from triplan_api.models.trip import *
 llm = ChatOllama(
     base_url="http://meow1.csie.ntu.edu.tw:11434",
-    model="llama3.3",
+    model="llama3.1",
     temperature=0,
 )
 

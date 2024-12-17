@@ -9,7 +9,7 @@ def process_user_input(user_input):
     解析使用者輸入的旅遊需求，提取並分類關鍵字，結構化輸出。
     """
     url = "http://meow1.csie.ntu.edu.tw:11434/api/generate"
-    model_name = "llama3.3"
+    model_name = "llama3.1"
 
     # Prompt 設計
     prompt = f"""
