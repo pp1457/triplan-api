@@ -20,15 +20,6 @@ from triplan_api.utils.map_api import *
 #
 #logger = logging.getLogger(__name__)  # Get the logger
 
-# Step 1: Mock process_user_input
-def process_user_input(user_input):
-    """
-    Mock function to process the user's input.
-    Instead of interacting with an AI or API, return a simple parsed value for testing.
-    """
-    return f"Mocked parsed input for: {user_input}"
-
-# Step 2: Find the middle empty point
 def find_mid_point(current_trip):
     """
     Find the middle point of a consecutive subarray of empty (None) slots in the current_trip list.
@@ -70,63 +61,10 @@ def query_attractions(target, start, end, parsed_input):
     load_dotenv()
     api_key = os.getenv("MAP_API_KEY")
 
-    attractions = get_attractions(target.time_slot + " " + " ".join(parsed_input[target.time_slot]), center.lati, center.long, start.place_id, end.place_id, api_key)
+    attractions = get_attractions(target.time_slot + " " + " ".join(parsed_input[target.time_slot]) + " ".join(parsed_input['general'], center.lati, center.long, start.place_id, end.place_id, api_key)
 
     return attractions
 
-#def query_attractions(target, start, end, parsed_input):
-#    """
-#    Mock function to query attractions between start and end.
-#    Replace this function with a real query to a service like Google Maps.
-#    """
-#    
-#    attractions = [
-#        Attraction(
-#            name="Museum of History",
-#            address="City Center",
-#            visit_duration=120,
-#            travel_time_to_prev=0,
-#            travel_time_to_next=30,
-#            tags=["historical"],
-#            description="A museum showcasing the history of the city.",
-#            reviews=["Amazing artifacts!", "Very informative."],
-#            rating=4.8,
-#            rating_count=200,
-#            ticket_price=15.0,
-#            url="http://example.com/museum"
-#        ),
-#        Attraction(
-#            name="Scenic Park",
-#            address="Near River",
-#            visit_duration=90,
-#            travel_time_to_prev=30,
-#            travel_time_to_next=30,
-#            tags=["scenic", "relaxing"],
-#            description="A peaceful park with beautiful river views.",
-#            reviews=["Perfect for a stroll.", "Great place to relax."],
-#            rating=4.5,
-#            rating_count=150,
-#            ticket_price=5.0,
-#            url="http://example.com/park"
-#        ),
-#        Attraction(
-#            name="Art Gallery",
-#            address="Downtown",
-#            visit_duration=60,
-#            travel_time_to_prev=15,
-#            travel_time_to_next=20,
-#            tags=["art", "cultural"],
-#            description="A gallery featuring contemporary art.",
-#            reviews=["Impressive collection!", "A must-visit for art lovers."],
-#            rating=4.7,
-#            rating_count=180,
-#            ticket_price=10.0,
-#            url="http://example.com/gallery"
-#        ),
-#    ]
-#    return attractions
-
-# Step 4: Use `aquire_attraction` to choose the best attraction
 def choose_best_attraction(current_trip, mid_index, attractions, user_input):
     """
     Select the best attraction using the aquire_attraction function.
@@ -213,11 +151,8 @@ def gen(current_trip, parsed_input, user_input):
     place_detail(start, api_key)
     place_detail(end, api_key)
     
-    # Mock process user input
-    
     # Query attractions
     attractions = query_attractions(mid, start, end, parsed_input)
-
     
     # Use `aquire_attraction` to find the best attraction
     best_attraction = choose_best_attraction(current_trip, mid_index, attractions, user_input)
