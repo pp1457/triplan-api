@@ -61,7 +61,7 @@ def query_attractions(target, start, end, parsed_input):
     load_dotenv()
     api_key = os.getenv("MAP_API_KEY")
 
-    attractions = get_attractions(target.time_slot + " " + " ".join(parsed_input[target.time_slot]) + " ".join(parsed_input['general'], center.lati, center.long, start.place_id, end.place_id, api_key)
+    attractions = get_attractions(target.time_slot + " " + " ".join(parsed_input[target.time_slot]) + " ".join(parsed_input['general']), center.lati, center.long, start.place_id, end.place_id, api_key)
 
     return attractions
 
