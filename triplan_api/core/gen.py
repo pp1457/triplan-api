@@ -50,8 +50,6 @@ def find_mid_point(current_trip):
     return results
 
 
-
-# Step 3: Query attractions from a mock data source
 def query_attractions(target, start, end, parsed_input):
     center = Location
     center.lati = (start.location.latitude + end.location.latitude) / 2
