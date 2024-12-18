@@ -17,13 +17,11 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 def acquire_attraction(current_trip, pos_to_put, attractions_list, requirements):
     """
     Function to select the best attraction to place at a specific position in the current trip.
-
     Parameters:
     - current_trip (list): A list of Attraction objects or None for empty slots.
     - pos_to_put (int): The position in `current_trip` to insert the selected attraction.
     - attractions_list (list): A list of Attraction objects.
     - requirements (str): User's input with additional constraints or preferences.
-
     Returns:
     - Attraction: The selected attraction object from the `attractions_list`.
     """

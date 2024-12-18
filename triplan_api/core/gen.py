@@ -8,7 +8,6 @@ from triplan_api.utils.chat_with_ai import acquire_attraction
 from triplan_api.models.trip import Attraction, Location, EmptySpot, TimeSlot, Travel
 from triplan_api.utils.map_api import *
 
-
 #logging.basicConfig(
 #    level=logging.INFO,  # Set the logging level (INFO, DEBUG, WARNING, ERROR, CRITICAL)
 #    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Log format
@@ -71,7 +70,6 @@ def choose_best_attraction(current_trip, mid_index, attractions, user_input):
     """
     return acquire_attraction(current_trip, mid_index, attractions, user_input)
 
-# Step 5: Update the current_trip with the best attraction
 def update_trip(current_trip, mid_index, best_attraction):
     """
     Update the current_trip list with the best attraction at the midpoint.
