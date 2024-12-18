@@ -16,8 +16,7 @@ detailed scheduling.
 
 1.  Clone the repository:
     ```bash
-    git clone 
-    cd 
+    git clone https://github.com/pp1457/triplan-api.git
     ```
 2.  Install the required dependencies:
     ```bash
