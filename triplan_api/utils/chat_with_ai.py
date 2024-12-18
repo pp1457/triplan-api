@@ -37,7 +37,7 @@ def acquire_attraction(current_trip, pos_to_put, attractions_list, requirements)
 
     # Prepare the attractions list description
     attractions_description = "\n".join(
-        f"ID: {i}, 名稱: {attr.name}, 地址: {attr.address}, 參觀時長: {attr.visit_duration} 分鐘, "
+        f"ID: {i}, 名稱: {attr.name}, 地址: {attr.address}"
         f"評分: {attr.rating or 'N/A'} （{attr.rating_count} 則評論）, "
         f"價格等級: {attr.price_level or 'N/A'}, 標籤: {', '.join(attr.tags) if attr.tags else '無標籤'}, "
         f"描述: {attr.description or '無描述'}, "
@@ -48,9 +48,9 @@ def acquire_attraction(current_trip, pos_to_put, attractions_list, requirements)
     # System message (in Chinese)
     system_message = (
         "你是一個行程規劃助手，負責選擇最適合加入行程的景點。你的目標是：\n"
-        "1. 確保行程順暢，避免不必要的往返。\n"
-        "2. 提高行程效率和愉悅度。\n"
-        "3. 同時考慮使用者的需求和偏好。\n"
+        "1. 同時考慮使用者的需求和偏好。\n"
+        "2. 確保行程順暢，避免不必要的往返。\n"
+        "3. 提高行程效率和愉悅度。\n"
         "你的回應應該僅包含被選景點的 ID 數字。"
     )
 
